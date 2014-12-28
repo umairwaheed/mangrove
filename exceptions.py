@@ -1,0 +1,2 @@
+class InvalidKeyFieldError(Exception):
+    pass
