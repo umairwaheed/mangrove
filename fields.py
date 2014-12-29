@@ -92,6 +92,17 @@ class StringField(Field):
 
         return self._repr(**kwargs)
 
+    def __set__(self, obj, value):
+        """Sanitize `value` for Python 2
+        
+        In Python 2 `str` and `unicode` are different, sqlalchemy reads data
+        `str` as `unicode` from the DB which fails check.
+        """
+        if isinstance(value, unicode):
+            value = str(value)
+
+        super(StringField, self).__set__(obj, value)
+
 
 class IntegerField(Field):
     """
