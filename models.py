@@ -90,8 +90,7 @@ class Model():
     -----------
 
     abstract:
-        If you use `False` webeggdb doesn't make a DB table for this
-        Model.
+        If `True` DB table will not be created
 
 
     Model Example
