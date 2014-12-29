@@ -1,6 +1,6 @@
 import sqlalchemy
 
-import webeggdb
+import settings
 
 
 class Engine():
@@ -15,10 +15,10 @@ class Engine():
 
         connection_string = (
             connection_string if connection_string is not None else
-            webeggdb.config['engine']['connection_string']
+            settings.config['engine']['connection_string']
         )
 
-        echo = echo if echo is not None else webeggdb.config['engine']['echo']
+        echo = echo if echo is not None else settings.config['engine']['echo']
         cls._engine = sqlalchemy.create_engine(connection_string, echo=echo)
 
     @classmethod
@@ -27,5 +27,5 @@ class Engine():
             # return the cached engine
             return cls._engine
 
-        cls.init_engine(**webeggdb.config['engine'])
+        cls.init_engine(**settings.config['engine'])
         return cls._engine

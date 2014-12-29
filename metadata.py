@@ -1,6 +1,6 @@
 import sqlalchemy
 
-import webeggdb.engine
+import engine
 
 
 class MetaData():
@@ -18,6 +18,6 @@ class MetaData():
             # return the cached metadata
             return cls._metadata
 
-        engine = webeggdb.engine.Engine.get_engine()
-        cls.setup_metadata(engine)
+        ngin = engine.Engine.get_engine()
+        cls.setup_metadata(ngin)
         return cls._metadata

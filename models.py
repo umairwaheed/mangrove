@@ -2,10 +2,10 @@ import json
 import sqlalchemy
 import collections
 
-import webeggdb.query
-import webeggdb.fields
-import webeggdb.metadata
-import webeggdb.exceptions
+import query
+import fields
+import metadata
+import exceptions
 
 
 class Meta(type):
@@ -53,9 +53,9 @@ class Meta(type):
                     "used for automatic primary key creation. Please "
                     "either define a primary key or rename `id`."
                 )
-                raise webeggdb.exceptions.InvalidKeyFieldError(detail)
+                raise exceptions.InvalidKeyFieldError(detail)
 
-            IntegerField = webeggdb.fields.IntegerField
+            IntegerField = fields.IntegerField
             key_col = IntegerField(name=key_name, primary_key=True)
             setattr(cls, key_name, key_col)
 
@@ -83,7 +83,7 @@ class Meta(type):
                 raise # re-raise the exception
 
 
-class Model(metaclass=Meta):
+class Model():
     """Base class for all models
 
     Attributes
@@ -98,8 +98,8 @@ class Model(metaclass=Meta):
     -------------
 
     class Person(Model):
-        name = webeggdb.fields.StringField()
-        age = webeggdb.fields.IntegerField()
+        name = fields.StringField()
+        age = fields.IntegerField()
 
 
     Primary Key
@@ -108,7 +108,8 @@ class Model(metaclass=Meta):
     To add primary key to the table add `primary_key=True` to columns
     """
 
-    metadata = webeggdb.metadata.MetaData.get_metadata()
+    __metaclass__ = Meta
+    metadata = metadata.MetaData.get_metadata()
     abstract = False
 
     def __init__(self, **kwargs):
@@ -150,8 +151,9 @@ class Model(metaclass=Meta):
 
     @classmethod
     def _get_items_from_dict(cls, item_type):
-        ChainMap = collections.ChainMap
-        items = ChainMap(*[c.__dict__ for c in cls.mro()]).items()
+        #ChainMap = collections.ChainMap
+        #items = ChainMap(*[c.__dict__ for c in cls.mro()]).items()
+        items = [i for base in cls.mro() for i in base.__dict__.items()]
         return {k: v for k, v in items if isinstance(v, item_type)}
 
     @classmethod
@@ -164,7 +166,7 @@ class Model(metaclass=Meta):
 
     @classmethod
     def select(cls, columns=[]):
-        return webeggdb.query.Query(cls, columns=columns)
+        return query.Query(cls, columns=columns)
 
     @classmethod
     def get_by_key(cls, key_map):
@@ -212,7 +214,7 @@ class Model(metaclass=Meta):
         if not self.key:
             return
 
-        ReferenceField = webeggdb.fields.ReferenceField
+        ReferenceField = fields.ReferenceField
 
         _exclude = list(self.get_key_name())
         for e in exclude:

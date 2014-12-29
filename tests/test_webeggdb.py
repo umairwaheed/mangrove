@@ -1,14 +1,14 @@
-import webeggdb.tests
-import webeggdb.models
-import webeggdb.fields
+import tests
+import models
+import fields
 
 
-class ReferenceFieldTestCase(webeggdb.tests.WebEggDBTestCase):
+class ReferenceFieldTestCase(tests.WebEggDBTestCase):
 
     def test_reference_field(self):
-        Model = webeggdb.models.Model
-        StringField = webeggdb.fields.StringField
-        ReferenceField = webeggdb.fields.ReferenceField
+        Model = models.Model
+        StringField = fields.StringField
+        ReferenceField = fields.ReferenceField
 
         class Shape(Model):
             name = StringField()
@@ -31,9 +31,9 @@ class ReferenceFieldTestCase(webeggdb.tests.WebEggDBTestCase):
         self.assertTrue(hasattr(p, cache_name))
 
     def test_name_of_constraint(self):
-        Model = webeggdb.models.Model
-        StringField = webeggdb.fields.StringField
-        ReferenceField = webeggdb.fields.ReferenceField
+        Model = models.Model
+        StringField = fields.StringField
+        ReferenceField = fields.ReferenceField
 
         class Parent(Model):
             name = StringField()
@@ -51,13 +51,13 @@ class ReferenceFieldTestCase(webeggdb.tests.WebEggDBTestCase):
         self.assertEqual(Child.parent.name, 'fk_parent')
 
 
-class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
+class ModelTestCase(tests.WebEggDBTestCase):
 
     def test_abstract_model(self):
 
-        class Shape(webeggdb.models.Model):
+        class Shape(models.Model):
             abstract = True
-            name = webeggdb.fields.StringField()
+            name = fields.StringField()
 
         class Rectangle(Shape):
             abstract = False
@@ -69,9 +69,9 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
 
     def test_delete(self):
 
-        class Person(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
-            age = webeggdb.fields.IntegerField()
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
 
         p = Person(name='John Doe', age=32)
         p.save()
@@ -84,9 +84,9 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
 
     def test_save(self):
 
-        class Person(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
-            age = webeggdb.fields.IntegerField()
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
 
         p = Person(name='Jon Doe', age=32)
         p.save()
@@ -108,9 +108,9 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
             pass
 
         # Insert record for which we already know the primary key
-        class Country(webeggdb.models.Model):
-            name = webeggdb.fields.StringField(primary_key=True)
-            population = webeggdb.fields.IntegerField()
+        class Country(models.Model):
+            name = fields.StringField(primary_key=True)
+            population = fields.IntegerField()
 
         country = Country(name='Pakistan', population=200*10**6)
         country.save()
@@ -124,9 +124,9 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
 
     def test_update(self):
 
-        class Person(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
-            age = webeggdb.fields.IntegerField()
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
 
         p = Person(name='Jon Doe', age=32)
         p.save()
@@ -151,12 +151,12 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
         name = set([p.name for p in Person.select()])
         self.assertEqual(len(name), 2)
 
-        class Parent(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
+        class Parent(models.Model):
+            name = fields.StringField()
 
-        class Child(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
-            parent = webeggdb.fields.ReferenceField(Parent)
+        class Child(models.Model):
+            name = fields.StringField()
+            parent = fields.ReferenceField(Parent)
 
         p = Parent(name='Jon')
         p.save()
@@ -175,8 +175,8 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
         self.assertTrue(child.parent is not None)
 
     def test_update_or_save(self):
-        class Person(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
+        class Person(models.Model):
+            name = fields.StringField()
 
         result = Person(name='Jon Doe').update_or_save()
         self.assertEqual(result.rowcount, 1)
@@ -187,9 +187,9 @@ class ModelTestCase(webeggdb.tests.WebEggDBTestCase):
         self.assertEqual(len(list(Person.select())), 1)
 
     def test_get_by_key(self):
-        class Person(webeggdb.models.Model):
-            name = webeggdb.fields.StringField()
-            age = webeggdb.fields.IntegerField()
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
 
         p = Person(name='John Doe', age=32)
         p.save()
