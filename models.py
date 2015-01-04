@@ -116,9 +116,10 @@ class Model():
             setattr(self, name, value)
 
     def __repr__(self):
-        data = {p: getattr(self, p) for p in self.get_columns()}
+        args = ', '.join('%s=%s' % (p, repr(getattr(self, p)))
+                         for p in self.get_columns())
         cls_name = self.__class__.__name__
-        return "%s(**%s)" % (cls_name, json.dumps(data))
+        return "%s(%s)" % (cls_name, args)
 
     def __iter__(self):
         return ((p, getattr(self, p)) for p in self.get_columns())

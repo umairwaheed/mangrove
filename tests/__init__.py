@@ -6,7 +6,7 @@ engine.Engine.init_engine(echo=False)
 import metadata
 
 
-class WebEggDBTestCase(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
 
     def clean_database(self):
         _engine = engine.Engine.get_engine()

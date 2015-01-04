@@ -2,6 +2,8 @@ import sqlalchemy
 
 
 class Field(sqlalchemy.Column):
+    """ Base class for all field types
+    """
     def __get__(self, obj, obj_type):
         if obj is None:
             return self
@@ -136,6 +138,17 @@ class FloatField(Field):
     def __init__(self, **kwargs):
         kwargs['type_'] = sqlalchemy.Float
         super(FloatField, self).__init__(**kwargs)
+
+
+class DateTimeField(Field):
+    """
+    Represents float or real field in the database
+
+    See sqlalchemy.DateTime for further documentation
+    """
+    def __init__(self, **kwargs):
+        kwargs['type_'] = sqlalchemy.DateTime
+        super(DateTimeField, self).__init__(**kwargs)
 
 
 class ReferenceField(sqlalchemy.ForeignKeyConstraint):

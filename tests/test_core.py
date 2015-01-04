@@ -3,7 +3,25 @@ import models
 import fields
 
 
-class ReferenceFieldTestCase(tests.WebEggDBTestCase):
+class DateTimeFieldTestCase(tests.BaseTestCase):
+    def test_datetime_field(self):
+        class Car(models.Model):
+            name = fields.StringField()
+            creation_time = fields.DateTimeField()
+
+        import datetime
+
+        creation_time = datetime.datetime.now()
+        car = Car(name="Foo", creation_time=creation_time)
+        car.save()
+
+        db_car = Car.select().fetchone()
+
+        self.assertEqual(creation_time, car.creation_time)
+        self.assertEqual(creation_time, db_car.creation_time)
+
+
+class ReferenceFieldTestCase(tests.BaseTestCase):
 
     def test_reference_field(self):
         Model = models.Model
@@ -51,7 +69,7 @@ class ReferenceFieldTestCase(tests.WebEggDBTestCase):
         self.assertEqual(Child.parent.name, 'fk_parent')
 
 
-class ModelTestCase(tests.WebEggDBTestCase):
+class ModelTestCase(tests.BaseTestCase):
 
     def test_abstract_model(self):
 
