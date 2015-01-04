@@ -24,3 +24,12 @@ Retrieve entity using:
 for person in Person.select():
     print(person)
 ```
+
+## TODOs
+- Add API reference.
+- Add tutorial
+- Add detailed documentation
+- Integrate with ReadTheDocs
+- Integrate with Travis CI.
+- Add test coverage report.
+- Add CHANGELOG file
