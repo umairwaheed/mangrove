@@ -166,6 +166,10 @@ class Model():
 
     @classmethod
     def select(cls, columns=[]):
+        """ Create query over this model
+
+        :param list columns: List of columns that need to be returned
+        """
         return query.Query(cls, columns=columns)
 
     @classmethod

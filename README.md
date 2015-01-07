@@ -25,6 +25,12 @@ for person in Person.select():
     print(person)
 ```
 
+Filter queries:
+```
+for person in Person.select().where(Person.name == "Foobar"):
+    print(person)
+```
+
 ## TODOs
 - Add API reference.
 - Add tutorial
