@@ -2,6 +2,9 @@
 Mangrove is a simplification layer over [SQLAlchemy](www.sqlalchemy.org/), it
 takes care of the boilerplate involved in using SQLAlchemy.
 
+## Python
+Supports both Python 2 and Python 3
+
 ## Examples
 Create model using:
 ```

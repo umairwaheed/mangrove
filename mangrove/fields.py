@@ -1,3 +1,4 @@
+import sys
 import sqlalchemy
 
 
@@ -100,8 +101,9 @@ class StringField(Field):
         In Python 2 `str` and `unicode` are different, sqlalchemy reads data
         `str` as `unicode` from the DB which fails check.
         """
-        if isinstance(value, unicode):
-            value = str(value)
+        if sys.version_info < (3, 0):
+            if isinstance(value, unicode):
+                value = str(value)
 
         super(StringField, self).__set__(obj, value)
 
