@@ -1,6 +1,6 @@
 import tests
-import models
-import fields
+from mangrove import models
+from mangrove import fields
 
 
 class DateTimeFieldTestCase(tests.BaseTestCase):

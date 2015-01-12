@@ -1,6 +1,6 @@
 import sqlalchemy
 
-import settings
+from mangrove import settings
 
 
 class Engine():

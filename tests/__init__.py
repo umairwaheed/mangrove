@@ -1,9 +1,9 @@
 import unittest
 
-import engine
+from mangrove import engine
 engine.Engine.init_engine(echo=False)
 
-import metadata
+from mangrove import metadata
 
 
 class BaseTestCase(unittest.TestCase):

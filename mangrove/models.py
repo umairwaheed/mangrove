@@ -2,10 +2,10 @@ import json
 import sqlalchemy
 import collections
 
-import query
-import fields
-import metadata
-import exceptions
+from mangrove import query
+from mangrove import fields
+from mangrove import metadata
+from mangrove import exceptions
 
 
 class Meta(type):
