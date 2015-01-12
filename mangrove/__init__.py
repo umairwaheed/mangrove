@@ -1,5 +1,5 @@
 """
-WebEggDB module is a simple syntax sugar over sqlalchemy to make it look
+Mangrove module is a simple syntax sugar over sqlalchemy to make it look
 like a ActiveRecord style ORM.
 """
 
