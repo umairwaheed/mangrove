@@ -1,5 +1,6 @@
-import meta
+import metacls
 
 
 class ModelBase():
-    __metaclass__ = meta.Meta
+    __metaclass__ = metacls.MetaCls
+    abstract = True

@@ -5,8 +5,8 @@ import collections
 
 from mangrove import query
 from mangrove import fields
-from mangrove import metadata
 from mangrove import exceptions
+from mangrove import connection
 
 
 if sys.version_info < (3, 0):
@@ -39,7 +39,6 @@ class Model(base.ModelBase):
     To add primary key to the table add `primary_key=True` to columns
     """
 
-    metadata = metadata.MetaData.get_metadata()
     abstract = False
 
     def __init__(self, **kwargs):
@@ -76,9 +75,7 @@ class Model(base.ModelBase):
         instance of the model.
         """
 
-        table_name = cls.__name__
-        tables = cls.metadata.tables
-        return tables[table_name]
+        return connection.get_table(cls)
 
     @classmethod
     def _get_items_from_dict(cls, item_type):
@@ -125,7 +122,7 @@ class Model(base.ModelBase):
 
         data = {p: getattr(self, p) for p in self.get_columns()}
         stmt = self.get_table().insert().values(**data)
-        result = self.metadata.bind.connect().execute(stmt)
+        result = connection.get_connection().execute(stmt)
 
         # set the key on the model
         key_name = self.get_key_name()
@@ -170,7 +167,7 @@ class Model(base.ModelBase):
         for col_name, col_value in zip(self.get_key_name(), self.key):
             stmt = stmt.where(table.columns[col_name] == col_value)
 
-        return self.metadata.bind.connect().execute(stmt)
+        return connection.get_connection().execute(stmt)
 
     def update_or_save(self):
         """ Update or insert new record
@@ -191,12 +188,10 @@ class Model(base.ModelBase):
         key_name = self.get_key_name()
         table = self.get_table()
 
-        conn = self.metadata.bind.connect()
-
         stmt = table.delete()
         for col_name, col_value in zip(key_name, key):
             stmt = stmt.where(table.columns[col_name] == col_value)
 
-        result = conn.execute(stmt)
+        result = connection.get_connection().execute(stmt)
         if result.rowcount:
             return result

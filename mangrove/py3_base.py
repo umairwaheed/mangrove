@@ -1,5 +1,5 @@
-from mangrove import meta
+from mangrove import metacls
 
 
-class ModelBase(metaclass=meta.Meta):
-    pass
+class ModelBase(metaclass=metacls.MetaCls):
+    abstract = True

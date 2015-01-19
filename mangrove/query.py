@@ -1,4 +1,5 @@
 import sqlalchemy
+from mangrove import connection
 
 
 class Query():
@@ -9,8 +10,11 @@ class Query():
         self.stmt = sqlalchemy.select(columns)
 
     def __iter__(self):
-        for row in self.stmt.execute():
+        for row in self.execute():
             yield self.model(**dict(row))
+
+    def execute(self, *args, **kwargs):
+        return connection.get_connection().execute(self.stmt)
 
     def where(self, *args, **kwargs):
         """
@@ -31,22 +35,22 @@ class Query():
         return self
 
     def fetchall(self, *multiparams, **params):
-        items = self.stmt.execute(*multiparams, **params).fetchall()
+        items = self.execute(*multiparams, **params).fetchall()
         return [self.model(**dict(row)) for row in items]
 
     def fetchmany(self, size=None, *multiparams, **params):
-        items = self.stmt.execute(*multiparams, **params).fetchmany(size)
+        items = self.execute(*multiparams, **params).fetchmany(size)
         return [self.model(**dict(row)) for row in items]
 
     def fetchone(self, *multiparams, **params):
-        item = self.stmt.execute(*multiparams, **params).fetchone()
+        item = self.execute(*multiparams, **params).fetchone()
         try:
             return self.model(**dict(item))
         except TypeError:
             return None
 
     def first(self, *multiparams, **params):
-        item = self.stmt.execute(*multiparams, **params).first()
+        item = self.execute(*multiparams, **params).first()
         try:
             return self.model(**dict(item))
         except TypeError:
