@@ -71,7 +71,11 @@ def install_connection(connection):
 
 
 def add_model(model_cls):
-    new_table = {model_cls.__name__: model_cls}
+    model_name = model_cls.__name__
+    if model_name in _tables:
+        return
+
+    new_table = {model_name: model_cls}
     _tables.update(new_table)
     if _connection is not None:
         _connection.init_tables(new_table)
