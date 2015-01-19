@@ -14,7 +14,7 @@ class AddModelTestCase(tests.BaseTestCase):
     def test_add_model(self):
         connection._connection = None
         connection.add_model(Person)
-        self.assertIn('Person', connection._tables)
+        self.assertIn('Person', connection._metadata)
 
         conn = connection.SqliteConnection()
         connection.install_connection(conn)
@@ -22,7 +22,7 @@ class AddModelTestCase(tests.BaseTestCase):
         class Person2(models.Model):
             name = fields.StringField()
 
-        self.assertIn('Person2', conn._metadata)
+        self.assertIn('Person2', connection._metadata)
 
     def test_install(self):
         connection._connection = None
@@ -33,4 +33,4 @@ class AddModelTestCase(tests.BaseTestCase):
 
     def test_constructor_init(self):
         sqlite_conn = connection.SqliteConnection()
-        self.assertIn('Person', sqlite_conn._metadata)
+        self.assertIn('Person', connection._metadata)

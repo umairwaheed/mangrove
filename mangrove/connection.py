@@ -5,7 +5,7 @@ import sqlalchemy
 _connection = None
 
 # Tables
-_tables = {}
+_metadata = sqlalchemy.MetaData()
 
 
 class Connection(object):
@@ -14,47 +14,10 @@ class Connection(object):
     Handles metadata and engine
     """
     def __init__(self, connection_string, **kwargs):
-        self._engine = sqlalchemy.create_engine(connection_string, **kwargs)
-        self._metadata = sqlalchemy.MetaData(self._engine)
-        self._metadata.reflect()
-        self.init_tables()
-
-    def init_tables(self, tables=None):
-        """ Create the DB tables
-
-        Creates all the columns of the table, adds a primary key
-        column if necessary and creates the table in the database.
-
-        :param dict tables: The dictionary containing tables you want to
-        initialize
-        """
-
-        tables = tables or _tables
-        metadata = self._metadata
-        SQLTable = sqlalchemy.Table
-        for table_name, model_cls in tables.items():
-            columns = model_cls.get_columns()
-            constraints = model_cls.get_constraints()
-            # add columns and constraints to tbe table
-            if table_name not in metadata.tables:
-                table = SQLTable(table_name, metadata)
-                try:
-                    for name, column in columns.items():
-                        column = column.copy()
-                        table.append_column(column)
-
-                    for name, constraint in constraints.items():
-                        if hasattr(constraint, 'parent'):
-                            constraint = constraint.copy()
-
-                        table.append_constraint(constraint)
-
-                except Exception:
-                    # in case of exception remove the table from the metadata
-                    metadata.remove(table)
-                    raise # re-raise the exception
-
-        metadata.create_all()
+        engine = sqlalchemy.create_engine(connection_string, **kwargs)
+        self._engine = engine
+        _metadata.reflect(engine)
+        _metadata.create_all(engine)
 
 
 class SqliteConnection(Connection):
@@ -71,11 +34,26 @@ def install_connection(connection):
 
 
 def add_model(model_cls):
-    model_name = model_cls.__name__
-    if model_name in _tables:
-        return
+    table_name = model_cls.__name__
 
-    new_table = {model_name: model_cls}
-    _tables.update(new_table)
-    if _connection is not None:
-        _connection.init_tables(new_table)
+    # add columns and constraints to tbe table
+    if table_name not in _metadata.tables:
+        table = sqlalchemy.Table(table_name, _metadata)
+        try:
+            for name, column in model_cls.get_columns().items():
+                column = column.copy()
+                table.append_column(column)
+
+            for name, constraint in model_cls.get_constraints().items():
+                if hasattr(constraint, 'parent'):
+                    constraint = constraint.copy()
+
+                table.append_constraint(constraint)
+
+        except Exception:
+            # in case of exception remove the table from the _metadata
+            _metadata.remove(table)
+            raise # re-raise the exception
+        else:
+            if _connection is not None:
+                _metadata.create_all(_connection._engine, tables=[table])
