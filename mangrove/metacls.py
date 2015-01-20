@@ -1,11 +1,9 @@
-import sqlalchemy
-
 from mangrove import fields
-from mangrove import metadata
 from mangrove import exceptions
+from mangrove import connection
 
 
-class Meta(type):
+class MetaCls(type):
     """Initialize the class attributes
 
     The meta class is used to assign names to the fields of the model
@@ -13,36 +11,35 @@ class Meta(type):
     def __new__(metacls, name, bases, namespace, **kwargs):
         cls = type.__new__(metacls, name, bases, namespace, **kwargs)
 
-        if cls.__name__ == "ModelBase":
+        if cls.abstract:
+            return cls
+
+        try:
+            constraints = cls.get_constraints()
+            columns = cls.get_columns()
+        except AttributeError:
+            # This is a top most base class
+            return cls
+
+        if not len(constraints) and not len(columns):
+            # Empty model
             return cls
 
         # Add foreign key columns to the model
-        for name, constraint in cls.get_constraints().items():
+        for name, constraint in constraints.items():
             # we need to assign name every time class is created.
             constraint.name = constraint.name or constraint.apply_prefix(name)
             for name, column in constraint.get_fk_columns().items():
                 setattr(cls, name, column)
 
-        for name, column in cls.get_columns().items():
+        # Need to call the function because `column` is outdated
+        # because foreign key column may have been added by the above
+        # code
+        columns = cls.get_columns()
+        for name, column in columns.items():
             # `column.name` is the name assigned by the user in the
             # constructor Field(name=[]...), it is given preference.
             column.name = column.name or name
-
-        if cls.__name__ != "Model" and not cls.abstract:
-            metacls._init_table(cls)
-
-        return cls
-
-    @staticmethod
-    def _init_table(cls):
-        """Initialize the underlying SQLAlchemy table
-
-        Creates all the columns of the table, adds a primary key
-        column if necessary and creates the table in the database.
-        """
-
-        metadata = cls.metadata
-        columns = cls.get_columns()
 
         if not cls.get_key_name():
             # Primary key not found! Add primary key column.
@@ -61,23 +58,5 @@ class Meta(type):
 
             columns[key_name] = key_col
 
-        # add columns and constraints to tbe table
-        table_name = cls.__name__
-        if table_name not in metadata.tables:
-            table = sqlalchemy.Table(cls.__name__, metadata)
-            try:
-                for name, column in columns.items():
-                    column = column.copy()
-                    table.append_column(column)
-
-                for name, constraint in cls.get_constraints().items():
-                    if hasattr(constraint, 'parent'):
-                        constraint = constraint.copy()
-
-                    table.append_constraint(constraint)
-
-                metadata.create_all(tables=[table])
-            except Exception:
-                # in case of exception remove the table from the metadata
-                metadata.remove(table)
-                raise # re-raise the exception
+        connection.add_model(cls)
+        return cls
