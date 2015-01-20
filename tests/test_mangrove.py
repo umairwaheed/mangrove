@@ -1,6 +1,7 @@
 import tests
 from mangrove import models
 from mangrove import fields
+from mangrove import connection
 
 
 class DateTimeFieldTestCase(tests.BaseTestCase):
@@ -80,9 +81,8 @@ class ModelTestCase(tests.BaseTestCase):
         class Rectangle(Shape):
             abstract = False
 
-        metadata = Shape.metadata
-        self.assertFalse('Shape' in metadata.tables)
-        self.assertTrue('Rectangle' in metadata.tables)
+        self.assertIs(connection.get_table(Shape), None)
+        self.assertIsNot(connection.get_table(Rectangle), None)
         self.assertIn('name', Rectangle.get_columns())
 
     def test_delete(self):

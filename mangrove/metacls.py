@@ -32,6 +32,10 @@ class MetaCls(type):
             for name, column in constraint.get_fk_columns().items():
                 setattr(cls, name, column)
 
+        # Need to call the function because `column` is outdated
+        # because foreign key column may have been added by the above
+        # code
+        columns = cls.get_columns()
         for name, column in columns.items():
             # `column.name` is the name assigned by the user in the
             # constructor Field(name=[]...), it is given preference.

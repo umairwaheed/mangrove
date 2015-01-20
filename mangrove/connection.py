@@ -4,7 +4,7 @@ import sqlalchemy
 # Global connection
 _connection = None
 
-# Tables
+# Metadata
 _metadata = sqlalchemy.MetaData()
 
 
@@ -19,6 +19,13 @@ class Connection(object):
         _metadata.reflect(engine)
         _metadata.create_all(engine)
 
+    def execute(self, statement):
+        return self._engine.connect().execute(statement)
+
+    def drop_all(self, *args, **kwargs):
+        _metadata.drop_all(self._engine, *args, **kwargs)
+        _metadata.clear()
+
 
 class SqliteConnection(Connection):
     """ Create connection to Sqlite DB
@@ -29,15 +36,19 @@ class SqliteConnection(Connection):
 
 
 def install_connection(connection):
+    """ Install as default connection
+    """
     global _connection
     _connection = connection
 
 
 def add_model(model_cls):
+    """ Add model to the DB
+    """
     table_name = model_cls.__name__
 
     # add columns and constraints to tbe table
-    if table_name not in _metadata.tables:
+    if table_name not in _metadata.tables and not model_cls.abstract:
         table = sqlalchemy.Table(table_name, _metadata)
         try:
             for name, column in model_cls.get_columns().items():
@@ -57,3 +68,16 @@ def add_model(model_cls):
         else:
             if _connection is not None:
                 _metadata.create_all(_connection._engine, tables=[table])
+
+
+def get_table(model_cls):
+    add_model(model_cls)
+    return _metadata.tables.get(model_cls.__name__)
+
+
+def get_connection():
+    return _connection
+
+
+# Install default connection
+install_connection(SqliteConnection())

@@ -5,13 +5,12 @@ from mangrove import fields
 from mangrove import connection
 
 
-class Person(models.Model):
-    name = fields.StringField()
-
-
 class AddModelTestCase(tests.BaseTestCase):
 
     def test_add_model(self):
+        class Person(models.Model):
+            name = fields.StringField()
+
         connection._connection = None
         connection.add_model(Person)
         self.assertIn('Person', connection._metadata)
@@ -32,5 +31,8 @@ class AddModelTestCase(tests.BaseTestCase):
         self.assertIsNot(connection._connection, None)
 
     def test_constructor_init(self):
+        class Person(models.Model):
+            name = fields.StringField()
+
         sqlite_conn = connection.SqliteConnection()
         self.assertIn('Person', connection._metadata)
