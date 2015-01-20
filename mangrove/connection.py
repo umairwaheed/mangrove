@@ -20,9 +20,13 @@ class Connection(object):
         _metadata.create_all(engine)
 
     def execute(self, statement):
+        """ Execute statement on this connection
+        """
         return self._engine.connect().execute(statement)
 
     def drop_all(self, *args, **kwargs):
+        """ Drop all tabls from DB and metadata
+        """
         _metadata.drop_all(self._engine, *args, **kwargs)
         _metadata.clear()
 
