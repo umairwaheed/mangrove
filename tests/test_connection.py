@@ -47,6 +47,7 @@ class MultipleConnectionTestCase(tests.BaseTestCase):
 
         Person(name='Umair').save()
         self.assertEqual(len(Person.select().fetchall()), 1)
+
         conn2 = connection.SqliteConnection()
         connection.install_connection(conn2)
         self.assertEqual(len(Person.select().fetchall()), 0)
