@@ -151,7 +151,7 @@ class ModelTestCase(tests.BaseTestCase):
 
         p.name = 'Umair Khan'
         result = p.update()
-        
+
         self.assertEqual(Person.select().fetchone().name, 'Umair Khan')
         self.assertEqual(len(list(Person.select())), 1)
         self.assertEqual(result.rowcount, 1)
@@ -216,3 +216,18 @@ class ModelTestCase(tests.BaseTestCase):
         self.assertEqual(p2.id, p.id)
         self.assertEqual(p2.name, p.name)
         self.assertEqual(p2.age, p.age)
+
+    def test_count(self):
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
+
+        for i in range(10):
+            Person(name='umair', age=i).save()
+
+        Person(name='khan', age=11).save()
+
+        self.assertEqual(Person.count().scalar(), 11)
+        self.assertEqual(
+            Person.count().where(Person.name == 'umair').scalar(), 10)
+        self.assertEqual(Person.count().where(Person.age == 1).scalar(), 1)

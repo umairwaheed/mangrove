@@ -34,6 +34,12 @@ for person in Person.select().where(Person.name == "Foobar"):
     print(person)
 ```
 
+Count rows:
+```
+print(Person.count().scalar())
+print(Person.count().where(Person.name == 'Foobar').scalar()
+```
+
 ## TODOs
 - Add API reference.
 - Add tutorial
