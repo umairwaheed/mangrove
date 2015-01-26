@@ -77,7 +77,7 @@ class StringField(Field):
     See sqlalchemy.String for further documentation on the arguments
     accepted.
     """
-    def __init__(self, length=None, **kwargs):
+    def __init__(self, length=None, *args, **kwargs):
         if length is None:
             _type = sqlalchemy.String
         else:
@@ -97,7 +97,7 @@ class StringField(Field):
 
     def __set__(self, obj, value):
         """Sanitize `value` for Python 2
-        
+
         In Python 2 `str` and `unicode` are different, sqlalchemy reads data
         `str` as `unicode` from the DB which fails check.
         """
@@ -114,7 +114,7 @@ class IntegerField(Field):
 
     See sqlalchemy.Integer for further documentation
     """
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['type_'] = sqlalchemy.Integer
         super(IntegerField, self).__init__(**kwargs)
 
@@ -126,7 +126,7 @@ class BooleanField(Field):
     See sqlalchemy.Boolean for further information.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['type_'] = sqlalchemy.Boolean
         super(BooleanField, self).__init__(**kwargs)
 
@@ -137,7 +137,7 @@ class FloatField(Field):
 
     See sqlalchemy.Float for further documentation
     """
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['type_'] = sqlalchemy.Float
         super(FloatField, self).__init__(**kwargs)
 
@@ -148,7 +148,7 @@ class DateTimeField(Field):
 
     See sqlalchemy.DateTime for further documentation
     """
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         kwargs['type_'] = sqlalchemy.DateTime
         super(DateTimeField, self).__init__(**kwargs)
 
@@ -176,7 +176,7 @@ class ReferenceField(sqlalchemy.ForeignKeyConstraint):
     See sqlalchemy.ForeignKeyConstraint for further documentation.
     """
 
-    def __init__(self, reference, **kwargs):
+    def __init__(self, reference, *args, **kwargs):
         self.reference = reference
         ref_name = reference.__name__
         ref_fk_columns = reference.get_key_name()
@@ -217,7 +217,7 @@ class ReferenceField(sqlalchemy.ForeignKeyConstraint):
         """
         reference:
             The reference table. If reference is None self.reference
-            will be used.  
+            will be used
         """
 
         reference = reference or self.reference

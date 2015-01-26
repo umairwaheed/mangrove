@@ -97,8 +97,18 @@ class Model(base.ModelBase):
         """ Create query over this model
 
         :param list columns: List of columns that need to be returned
+
+        :returns: `query.Counter` object.
         """
         return query.Query(cls, columns=columns)
+
+    @classmethod
+    def count(cls):
+        """ Count records
+
+        :returns: `query.Counter` object.
+        """
+        return query.Counter(cls)
 
     @classmethod
     def get_by_key(cls, key_map):
