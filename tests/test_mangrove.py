@@ -231,3 +231,14 @@ class ModelTestCase(tests.BaseTestCase):
         self.assertEqual(
             Person.count().where(Person.name == 'umair').scalar(), 10)
         self.assertEqual(Person.count().where(Person.age == 1).scalar(), 1)
+
+    def test_ordering(self):
+        class Person(models.Model):
+            name = fields.StringField()
+            age = fields.IntegerField()
+
+        for i in range(10):
+            Person(name='umair', age=i).save()
+
+        self.assertEqual(Person.select().order_by('age').first().age, 0)
+        self.assertEqual(Person.select().order_by('-age').first().age, 9)

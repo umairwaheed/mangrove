@@ -59,6 +59,18 @@ class Query(SelectStatement):
         for row in self.execute():
             yield self.model(**dict(row))
 
+    def order_by(self, *args, **kwargs):
+        """ Adds orderby clause to the query
+
+        .. code
+        >>> Query(Model).order_by('id').fetchall()
+        >>> Query(Model).order_by(Person.id).fetchall()
+        >>> Query(Model).order_by('-id').fetchall()
+        >>> Query(Model).order_by(-Person.id).fetchall()
+        """
+        self.stmt = self.stmt.order_by(*args, **kwargs)
+        return self
+
     def fetchall(self, *multiparams, **params):
         """ Return all rows as list
         """

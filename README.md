@@ -40,6 +40,15 @@ print(Person.count().scalar())
 print(Person.count().where(Person.name == 'Foobar').scalar()
 ```
 
+Ordering
+```
+Person.select().order_by('name')
+Person.select().order_by(Person.name)
+Person.select().order_by('-name')
+Person.select().order_by(-Person.name)
+```
+
+
 ## TODOs
 - Add API reference.
 - Add tutorial
