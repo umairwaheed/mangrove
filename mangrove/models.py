@@ -103,7 +103,7 @@ class Model(base.ModelBase):
         return query.Query(cls, columns=columns)
 
     @classmethod
-    def count(cls):
+    def get_count(cls):
         """ Count records
 
         :returns: `query.Counter` object.

@@ -227,10 +227,10 @@ class ModelTestCase(tests.BaseTestCase):
 
         Person(name='khan', age=11).save()
 
-        self.assertEqual(Person.count().scalar(), 11)
+        self.assertEqual(Person.get_count().scalar(), 11)
         self.assertEqual(
-            Person.count().where(Person.name == 'umair').scalar(), 10)
-        self.assertEqual(Person.count().where(Person.age == 1).scalar(), 1)
+            Person.get_count().where(Person.name == 'umair').scalar(), 10)
+        self.assertEqual(Person.get_count().where(Person.age == 1).scalar(), 1)
 
     def test_ordering(self):
         class Person(models.Model):
