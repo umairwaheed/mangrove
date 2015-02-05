@@ -63,21 +63,30 @@ class Query(SelectStatement):
         """ Adds orderby clause to the query
 
         .. code
-        >>> Query(Model).order_by('id').fetchall()
-        >>> Query(Model).order_by(Person.id).fetchall()
-        >>> Query(Model).order_by('-id').fetchall()
-        >>> Query(Model).order_by(-Person.id).fetchall()
+        >>> Query(Model).order_by('id').fetch()
+        >>> Query(Model).order_by(Person.id).fetch()
+        >>> Query(Model).order_by('-id').fetch()
+        >>> Query(Model).order_by(-Person.id).fetch()
         """
         self.stmt = self.stmt.order_by(*args, **kwargs)
         return self
 
-    def fetchall(self, *multiparams, **params):
+    def fetch(self, size=None):
+        if size is None:
+            return self._fetchall()
+        else:
+            return self._fetchmany(size)
+
+    def get(self):
+        return self._first()
+
+    def _fetchall(self, *multiparams, **params):
         """ Return all rows as list
         """
         items = self.execute(*multiparams, **params).fetchall()
         return [self.model(**dict(row)) for row in items]
 
-    def fetchmany(self, size=None, *multiparams, **params):
+    def _fetchmany(self, size=None, *multiparams, **params):
         """ Return a particular number of rows
 
         :param int size: The number of rows which should be returned
@@ -85,7 +94,7 @@ class Query(SelectStatement):
         items = self.execute(*multiparams, **params).fetchmany(size)
         return [self.model(**dict(row)) for row in items]
 
-    def fetchone(self, *multiparams, **params):
+    def _fetchone(self, *multiparams, **params):
         """ Return one row
         """
         item = self.execute(*multiparams, **params).fetchone()
@@ -94,7 +103,7 @@ class Query(SelectStatement):
         except TypeError:
             return None
 
-    def first(self, *multiparams, **params):
+    def _first(self, *multiparams, **params):
         """ Return first row
         """
         item = self.execute(*multiparams, **params).first()
