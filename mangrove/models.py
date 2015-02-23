@@ -103,14 +103,6 @@ class Model(base.ModelBase):
         return query.Query(cls, columns=columns)
 
     @classmethod
-    def get_count(cls):
-        """ Count records
-
-        :returns: `query.Counter` object.
-        """
-        return query.Counter(cls)
-
-    @classmethod
     def get_by_key(cls, key_map):
         query = cls.select()
         for column, value in key_map.items():

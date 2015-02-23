@@ -6,14 +6,18 @@ class SelectStatement():
     """ Manages the underlying sqlalchemy select statement
     """
 
-    def __init__(self, columns=[], funcs=[]):
+    def __init__(self, columns=[], funcs=[], stmt=None):
         """ Constructor
 
         :param list columns: A list of columns that need to be part of
             this select statement.
         :param list funcs: A list of `sqlalchemy.funcs`
+        :param sqlalchemy.statement stmt: Select statement
         """
-        self.stmt = sqlalchemy.select(columns or funcs)
+        if stmt is not None:
+            self.stmt = stmt
+        else:
+            self.stmt = sqlalchemy.select(columns or funcs)
 
     def execute(self, *args, **kwargs):
         """ Executes the statement using the default connection
@@ -80,6 +84,11 @@ class Query(SelectStatement):
     def get(self):
         return self._first()
 
+    def count(self):
+        stmt = self.stmt.with_only_columns([sqlalchemy.func.count()])
+        stmt = stmt.select_from(self.model.get_table())
+        return SelectStatement(stmt=stmt).execute().scalar()
+
     def _fetchall(self, *multiparams, **params):
         """ Return all rows as list
         """
@@ -111,16 +120,3 @@ class Query(SelectStatement):
             return self.model(**dict(item))
         except TypeError:
             return None
-
-
-class Counter(SelectStatement):
-    """ Adds functionality to count rows to `SelectStatement`
-    """
-    def __init__(self, model):
-        super(Counter, self).__init__(funcs=[sqlalchemy.func.count()])
-        self.stmt = self.stmt.select_from(model.get_table())
-
-    def scalar(self):
-        """ Returns scalar value of the count
-        """
-        return self.execute().scalar()
