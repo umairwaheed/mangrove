@@ -36,8 +36,8 @@ for person in Person.select().where(Person.name == "Foobar"):
 
 Count rows:
 ```
-print(Person.count().scalar())
-print(Person.count().where(Person.name == 'Foobar').scalar()
+print(Person.select().count())
+print(Person.select().where(Person.name == 'Foobar').count())
 ```
 
 Ordering
@@ -55,5 +55,4 @@ Person.select().order_by(-Person.name)
 - Add detailed documentation
 - Integrate with ReadTheDocs
 - Integrate with Travis CI.
-- Add test coverage report.
 - Add CHANGELOG file
