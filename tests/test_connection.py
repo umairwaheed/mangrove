@@ -1,3 +1,5 @@
+import mock
+
 import tests
 
 from mangrove import models
@@ -22,6 +24,15 @@ class AddModelTestCase(tests.BaseTestCase):
             name = fields.StringField()
 
         self.assertIn('Person2', connection._metadata)
+
+    def test_add_model_exception(self):
+        class Person(models.Model):
+            name = fields.StringField()
+
+        connection._metadata.clear()
+        Person.get_columns = mock.MagicMock()
+        Person.get_columns.side_effect = Exception()
+        self.assertRaises(Exception, lambda: connection.add_model(Person))
 
     def test_install(self):
         connection._connection = None
