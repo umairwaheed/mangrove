@@ -16,7 +16,7 @@ class DateTimeFieldTestCase(tests.BaseTestCase):
         car = Car(name="Foo", creation_time=creation_time)
         car.save()
 
-        db_car = Car.select().fetchone()
+        db_car = Car.select().get()
 
         self.assertEqual(creation_time, car.creation_time)
         self.assertEqual(creation_time, db_car.creation_time)
@@ -42,7 +42,7 @@ class ReferenceFieldTestCase(tests.BaseTestCase):
         p1 = Point(position='1', shape=rect)
         p1.save()
 
-        p = Point.select().fetchone()
+        p = Point.select().get()
         cache_name = 'cache_fk_shape'
         self.assertFalse(hasattr(p, cache_name))
         self.assertEqual(p.position, '1')
@@ -152,7 +152,7 @@ class ModelTestCase(tests.BaseTestCase):
         p.name = 'Umair Khan'
         result = p.update()
 
-        self.assertEqual(Person.select().fetchone().name, 'Umair Khan')
+        self.assertEqual(Person.select().get().name, 'Umair Khan')
         self.assertEqual(len(list(Person.select())), 1)
         self.assertEqual(result.rowcount, 1)
 
@@ -183,11 +183,11 @@ class ModelTestCase(tests.BaseTestCase):
         c.save()
 
         Child(name='Boo', id=1).update()
-        self.assertEqual(Child.select().fetchone().parent, None)
+        self.assertEqual(Child.select().get().parent, None)
 
         c.update()
         Child(name='Boo', id=1).update(exclude=['parent'])
-        child = Child.select().fetchone()
+        child = Child.select().get()
         self.assertEqual(child.name, 'Boo')
         self.assertEqual(child.fk_parent_id, 1)
         self.assertTrue(child.parent is not None)
@@ -227,10 +227,10 @@ class ModelTestCase(tests.BaseTestCase):
 
         Person(name='khan', age=11).save()
 
-        self.assertEqual(Person.get_count().scalar(), 11)
+        self.assertEqual(Person.select().count(), 11)
         self.assertEqual(
-            Person.get_count().where(Person.name == 'umair').scalar(), 10)
-        self.assertEqual(Person.get_count().where(Person.age == 1).scalar(), 1)
+            Person.select().where(Person.name == 'umair').count(), 10)
+        self.assertEqual(Person.select().where(Person.age == 1).count(), 1)
 
     def test_ordering(self):
         class Person(models.Model):
@@ -240,5 +240,5 @@ class ModelTestCase(tests.BaseTestCase):
         for i in range(10):
             Person(name='umair', age=i).save()
 
-        self.assertEqual(Person.select().order_by('age').first().age, 0)
-        self.assertEqual(Person.select().order_by('-age').first().age, 9)
+        self.assertEqual(Person.select().order_by('age').get().age, 0)
+        self.assertEqual(Person.select().order_by('-age').get().age, 9)

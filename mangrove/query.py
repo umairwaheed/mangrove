@@ -103,15 +103,6 @@ class Query(SelectStatement):
         items = self.execute(*multiparams, **params).fetchmany(size)
         return [self.model(**dict(row)) for row in items]
 
-    def _fetchone(self, *multiparams, **params):
-        """ Return one row
-        """
-        item = self.execute(*multiparams, **params).fetchone()
-        try:
-            return self.model(**dict(item))
-        except TypeError:
-            return None
-
     def _first(self, *multiparams, **params):
         """ Return first row
         """

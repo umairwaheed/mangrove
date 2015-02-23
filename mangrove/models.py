@@ -108,7 +108,7 @@ class Model(base.ModelBase):
         for column, value in key_map.items():
             query.where(column==value)
 
-        return query.fetchone()
+        return query.get()
 
     @property
     def key(self):

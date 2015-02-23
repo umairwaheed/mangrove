@@ -202,7 +202,7 @@ class ReferenceField(sqlalchemy.ForeignKeyConstraint):
             value = getattr(obj, column)
             query.where(getattr(reference, fk_column) == value)
 
-        _object = query.fetchone()
+        _object = query.get()
         setattr(obj, cache_name, _object)
         return _object
 
