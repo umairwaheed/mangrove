@@ -1,13 +1,13 @@
 import mock
 
-import tests
+import test
 
 from mangrove import models
 from mangrove import fields
 from mangrove import connection
 
 
-class AddModelTestCase(tests.BaseTestCase):
+class AddModelTestCase(test.BaseTestCase):
 
     def test_add_model(self):
         class Person(models.Model):
@@ -49,7 +49,7 @@ class AddModelTestCase(tests.BaseTestCase):
         self.assertIn('Person', connection._metadata)
 
 
-class MultipleConnectionTestCase(tests.BaseTestCase):
+class MultipleConnectionTestCase(test.BaseTestCase):
     def test_multiple_connection(self):
         conn1 = connection.get_connection()
 

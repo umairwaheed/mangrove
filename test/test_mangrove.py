@@ -1,10 +1,10 @@
-import tests
+import test
 from mangrove import models
 from mangrove import fields
 from mangrove import connection
 
 
-class DateTimeFieldTestCase(tests.BaseTestCase):
+class DateTimeFieldTestCase(test.BaseTestCase):
     def test_datetime_field(self):
         class Car(models.Model):
             name = fields.StringField()
@@ -22,7 +22,7 @@ class DateTimeFieldTestCase(tests.BaseTestCase):
         self.assertEqual(creation_time, db_car.creation_time)
 
 
-class ReferenceFieldTestCase(tests.BaseTestCase):
+class ReferenceFieldTestCase(test.BaseTestCase):
 
     def test_reference_field(self):
         Model = models.Model
@@ -70,7 +70,7 @@ class ReferenceFieldTestCase(tests.BaseTestCase):
         self.assertEqual(Child.parent.name, 'fk_parent')
 
 
-class ModelTestCase(tests.BaseTestCase):
+class ModelTestCase(test.BaseTestCase):
 
     def test_abstract_model(self):
 

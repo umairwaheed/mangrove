@@ -1,8 +1,17 @@
+import sys
 import sqlalchemy
 from mangrove import connection
 
 
-class SelectStatement():
+if sys.version_info < (3, 0):
+    class Base(object):
+        pass
+else:
+    class Base():
+        pass
+
+
+class SelectStatement(Base):
     """ Manages the underlying sqlalchemy select statement
     """
 
